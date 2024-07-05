@@ -65,20 +65,22 @@ export function getRewardRolesIds(currentMessageCount: number, channelId?: Snowf
     return rewards
 }
 
-export function getRequiredMessageCount(roleId: Snowflake): number | undefined {
-    let requiredMessageCount = rewardsDatabase.global.get(roleId)
-    if (requiredMessageCount) return requiredMessageCount
+export function getRequiredMessageCount(roleId: Snowflake, channelId?: Snowflake): number | undefined {
+    if (isChannelValid(channelId)) {
+        return rewardsDatabase.byChannel.get(channelId!)?.get(roleId)
+    }
 
-    rewardsDatabase.byChannel.forEach(rewards => {
-        requiredMessageCount = rewards.get(roleId)
-    })
-
-    return requiredMessageCount
+    return rewardsDatabase.global.get(roleId)
 }
 
 export async function createOrEditReward(rewardRoleId: Snowflake, requiredMessageCount: number, channelId?: Snowflake): Promise<boolean> {
     if (channelId) {
-        rewardsDatabase.byChannel.set(channelId, new Map([[rewardRoleId, requiredMessageCount]]))
+        if (isChannelValid(channelId)) {
+            rewardsDatabase.byChannel.get(channelId)?.set(rewardRoleId, requiredMessageCount)
+        }
+        else {
+            rewardsDatabase.byChannel.set(channelId, new Map([[rewardRoleId, requiredMessageCount]]))
+        }
     }
     else {
         rewardsDatabase.global.set(rewardRoleId, requiredMessageCount)
@@ -91,6 +93,9 @@ export async function deleteReward(roleId: Snowflake, channelId?: Snowflake): Pr
     let deleted: boolean | undefined
     if (isChannelValid(channelId)) {
         deleted = rewardsDatabase.byChannel.get(channelId!)?.delete(roleId)
+        if (deleted && rewardsDatabase.byChannel.get(channelId!)?.size === 0) {
+            deleted = rewardsDatabase.byChannel.delete(channelId!)
+        }
     }
     else {
         deleted = rewardsDatabase.global.delete(roleId)

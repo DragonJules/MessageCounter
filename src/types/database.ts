@@ -2,7 +2,6 @@ import { Snowflake } from "discord.js"
 
 export interface DatabaseJSONBody {}
 
-
 export class Database {
     public path: string
 
@@ -18,8 +17,6 @@ export class Database {
         return null
     }
 }
-
-
 
 export interface Reward {
     [roleId: Snowflake]: number
@@ -80,8 +77,8 @@ export class RewardDatabase extends Database {
         })
 
         this.byChannel.forEach((channelRewards, channelId) => {
+            rewards.byChannel[channelId] = {}
             channelRewards.forEach((requiredMessageCount, rewardRoleId) => {
-                rewards.byChannel[channelId] = {}
                 rewards.byChannel[channelId][rewardRoleId] = requiredMessageCount
             })
         })
@@ -132,7 +129,6 @@ export class SentMessagesDatabase extends Database {
 
     public toJSON(): SentMessagesDatabaseJSONBody {
         const users: SentMessagesDatabaseJSONBody = {}
-
 
         this.users.forEach(({ global, byChannel }, userId) => {
             users[userId] = {

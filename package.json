@@ -6,7 +6,7 @@
 		"build": "tsc",
 		"dev": "concurrently \"tsc -w\" \"nodemon .\"",
 		"start": "npm run build && node .",
-		"deploy": "node ./dist/deploy-commands.js"
+		"deploy": "npm run build && node ./dist/deploy-commands.js"
 	},
 	"keywords": [],
 	"author": "@roules_",

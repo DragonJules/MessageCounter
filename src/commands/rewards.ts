@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, PermissionFlagsBits, Interaction, CommandInteraction, ChatInputCommandInteraction, Snowflake, ChannelType } from 'discord.js'
-import { getRequiredMessageCount, getAllRewards, deleteReward, createOrEditReward } from '../database-handler.js'
+import { getRequiredMessageCount, getAllRewards, deleteReward, createOrEditReward, isChannelValid } from '../database-handler.js'
 import { replyError } from '../util/reply-error.js'
+import { RewardMap } from '../types/database.js'
 
 export const data = new SlashCommandBuilder()
     .setName('rewards')
@@ -57,6 +58,11 @@ export const data = new SlashCommandBuilder()
                 .setDescription('Find a reward for this role')
                 .setRequired(true)
             )
+            .addChannelOption(option => option
+                .setName('channel')
+                .setDescription('Delete reward for the specified channel (leave empty for a global reward)')
+                .addChannelTypes(ChannelType.GuildText)
+            ) 
         )
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
@@ -87,7 +93,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
         case 'find-by-role':
             if (!rewardRole) return await replyError(interaction)
-            findRewardByRoleCommand(interaction, rewardRole.id)
+            findRewardByRoleCommand(interaction, rewardRole.id, channelId)
             break
 
         default:
@@ -108,7 +114,7 @@ async function createOrEditRewardCommand(interaction: ChatInputCommandInteractio
         return await replyError(interaction)
     }
 
-    return await interaction.reply('✅ New reward was successfully created')
+    return await interaction.reply('✅ Reward was successfully created/edited')
 }
     
 async function deleteRewardCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake, channelId?: string) {
@@ -124,9 +130,23 @@ async function deleteRewardCommand(interaction: ChatInputCommandInteraction, rew
     return await interaction.reply('✅ Reward was successfully deleted')
 }
 
+function getRewardsTextArray(rewards: RewardMap): string[] {
+    return Array.from(rewards.entries()).map(reward => `* <@&${reward[0]}> : ${reward[1]}`)
+}
+
 async function overviewRewardsCommand(interaction: ChatInputCommandInteraction) {
     try {
-        // TODO: Implement this.
+        const rewards = getAllRewards()
+        
+        const globalRewardsTextArray = getRewardsTextArray(rewards.global)
+        const globalRewardsText = globalRewardsTextArray.length ? globalRewardsTextArray.join('\n') : '*No reward*'
+
+        const channelRewardsTextArray = Array.from(rewards.byChannel.entries()).map(channelRewards => `* <#${channelRewards[0]}> :\n ${getRewardsTextArray(channelRewards[1]).join('\n ')}`)
+        const channelRewardsText = channelRewardsTextArray.length ? channelRewardsTextArray.join('\n') : '*No reward*'
+
+        const message = `## Rewards Overview \n\`@role : required message count\`\n### Global : \n${globalRewardsText}\n### By Channel : \n${channelRewardsText}`
+
+        interaction.reply(message)
     }
     catch (err) {
         console.error(err)
@@ -134,15 +154,15 @@ async function overviewRewardsCommand(interaction: ChatInputCommandInteraction) 
     }
 }
 
-async function findRewardByRoleCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake) {
-
-    // TODO: update this so it works with channel specefic rewards
-
+async function findRewardByRoleCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake, channelId?: Snowflake) {
     try {
-        const requiredMsgNb = getRequiredMessageCount(rewardRoleId)
+        const requiredMessageCount = getRequiredMessageCount(rewardRoleId, channelId)
 
-        const message = (requiredMsgNb !== undefined && requiredMsgNb !== -1) ? 
-            `The role <@&${rewardRoleId}> is earned after sending ${requiredMsgNb} messages` : 'There is no reward available for this role'
+        const channelIsValid = isChannelValid(channelId)
+        const channelSpecificText = channelIsValid ? `in channel <#${channelId}>` : ''
+
+        const message = (requiredMessageCount) ? 
+            `The role <@&${rewardRoleId}> is earned after sending **${requiredMessageCount}** messages ${channelSpecificText}` :`There is no ${channelId ? `<#${channelId}> specific` : 'global'} reward with this role`
 
         return await interaction.reply(message)
     }

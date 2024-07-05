@@ -1,4 +1,4 @@
-import { Interaction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js'
+import { ChannelType, Interaction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js'
 
 
 export const data = new SlashCommandBuilder()
@@ -23,6 +23,7 @@ export const data = new SlashCommandBuilder()
             .addChannelOption(option => option
                 .setName('channel')
                 .setDescription('Set number of sent messages in the specified channel. (leave empty to edit global amount)')
+                .addChannelTypes(ChannelType.GuildText)
             )
         )
         .addSubcommand(subcommand => subcommand
@@ -36,6 +37,7 @@ export const data = new SlashCommandBuilder()
             .addChannelOption(option => option
                 .setName('channel')
                 .setDescription('Reset number of sent messages in the specified channel. (leave empty to reset globaly)')
+                .addChannelTypes(ChannelType.GuildText)
             )
         )
     )
