@@ -67,6 +67,7 @@ We will first create the bot :
    * Manage Roles
 9. Select **Guild Install** and copy the generated URL
 10. Follow this URL and add the bot to the server you want, accept everything, the bot should be added to your server !
+11. Once it's added, in your server settings, in the **Roles** tab, make sure that the role with the name of your bot is at the top of the list, otherwise it will not work.
 
 Now, we can link the bot to the code, so you can start using it : 
 1. You need to have [Node.js](https://nodejs.org/en) installed on your machine.
