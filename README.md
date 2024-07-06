@@ -60,7 +60,7 @@ We will first create the bot :
 5. Select tab **Bot**, click **Reset Token**, copy the token, save it for later.
 6. Cutomize the bot as you want (Profile picture, banner, name...). Below **Authorization Flow**, untick **Public Bot**, tick **Server Members Intent** and **Message Content Intent**
 7. Save changes.
-8. In the **OAuth2** tab, in **Scopes**, select **bot**, then tick the following permissions:
+8. In the **OAuth2** tab, in **Scopes**, select **bot** and **application.commands**, then tick the following permissions:
    * Read Messages/View Channels
    * Send Messages
    * Use Slash Commands
