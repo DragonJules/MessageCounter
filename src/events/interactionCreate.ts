@@ -1,4 +1,6 @@
 import { BaseGuildTextChannel, Interaction } from "discord.js"
+import { ephemeralAnswers } from ".."
+import { replyError } from "../util/reply-error"
 
 async function execute(interaction: Interaction) {
     if (interaction.isChatInputCommand()) {
@@ -11,7 +13,7 @@ async function execute(interaction: Interaction) {
             console.log(`${interaction.user.tag} (${interaction.user.id}) in #${(interaction.channel as BaseGuildTextChannel).name} (${interaction.channel?.id}) triggered an interaction (${interaction.commandName}).`)
         } catch (error) {
             console.error(error)
-            await interaction.reply({ content: 'An error occured while executing this command!', ephemeral: true })
+            await replyError(interaction)
         }
     }
 }

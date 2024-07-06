@@ -1,6 +1,7 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, Snowflake } from 'discord.js'
 import { replyError } from '../util/reply-error.js'
 import { editUser, getAllUsers, getUserInfos, getUserMessageCount, isChannelValid, resetUser } from '../database-handler.js'
+import { ephemeralAnswers } from '../index.js'
 
 
 export const data = new SlashCommandBuilder()
@@ -110,7 +111,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     if(!response.length) return await replyError(interaction) 
-    interaction.reply(response)
+    interaction.reply({ content: response, ephemeral: ephemeralAnswers })
 }
 
 async function setUserMessageCountCommand(userId: Snowflake, messageCount: number, channelId?: Snowflake): Promise<string> {

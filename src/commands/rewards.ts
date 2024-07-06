@@ -2,6 +2,7 @@ import { SlashCommandBuilder, PermissionFlagsBits, Interaction, CommandInteracti
 import { getRequiredMessageCount, getAllRewards, deleteReward, createOrEditReward, isChannelValid } from '../database-handler.js'
 import { replyError } from '../util/reply-error.js'
 import { RewardMap } from '../types/database.js'
+import { ephemeralAnswers } from '../index.js'
 
 export const data = new SlashCommandBuilder()
     .setName('rewards')
@@ -109,7 +110,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     if(!response.length) return await replyError(interaction) 
-    interaction.reply(response)
+    interaction.reply({ content: response, ephemeral: ephemeralAnswers })
 }
 
 
