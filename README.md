@@ -64,6 +64,7 @@ We will first create the bot :
    * Read Messages/View Channels
    * Send Messages
    * Use Slash Commands
+   * Manage Roles
 9. Select **Guild Install** and copy the generated URL
 10. Follow this URL and add the bot to the server you want, accept everything, the bot should be added to your server !
 
