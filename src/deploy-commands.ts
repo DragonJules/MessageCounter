@@ -1,7 +1,7 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { REST } from '@discordjs/rest'
 import { RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, SlashCommandBuilder, Snowflake } from 'discord.js'
+import fs from 'node:fs'
+import path from 'node:path'
 import { clientId, token } from '../config/config.json'
 
 const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = []
@@ -38,10 +38,7 @@ function guildDeleteCommands(guildId: Snowflake) {
 }
 
 export {
-	appDeployCommands,
-	appDeleteCommands,
-	guildDeployCommands,
-	guildDeleteCommands
+	appDeleteCommands, appDeployCommands, guildDeleteCommands, guildDeployCommands
 }
 
 const flag = process.argv[2]

@@ -1,6 +1,6 @@
+import { Snowflake } from 'discord.js'
 import fs from 'node:fs/promises'
 import { ChannelMessageCountMap, ChannelRewardsMap, Database, RewardDatabase, RewardMap, SentMessagesDatabase } from './types/database'
-import { Snowflake } from 'discord.js'
 
 import rewardsDbRaw from '../database/rewards.json'
 import sentMessagesDbRaw from '../database/sent-messages.json'

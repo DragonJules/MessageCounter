@@ -1,7 +1,7 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, Snowflake } from 'discord.js'
-import { replyError } from '../util/reply-error.js'
 import { editUser, getAllUsers, getUserInfos, getUserMessageCount, isChannelValid, resetUser } from '../database-handler.js'
 import { ephemeralAnswers } from '../index.js'
+import { replyError } from '../util/reply-error.js'
 
 
 export const data = new SlashCommandBuilder()
@@ -9,7 +9,7 @@ export const data = new SlashCommandBuilder()
     .setDescription('Manage sent messages or get information about them')
     .addSubcommandGroup(group => group
         .setName('manage')
-        .setDescription('Manages the sent messages')
+        .setDescription('Manages the sent messages')    
         .addSubcommand(subcommand => subcommand
             .setName('set')
             .setDescription('Sets the message count')

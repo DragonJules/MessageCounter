@@ -50,7 +50,7 @@ export class RewardDatabase extends Database {
         this.rewardChannels = new Set(this.byChannel.keys())
     }
 
-    protected parseRaw(databaseRaw: RewardDatabaseJSONBody): {
+    protected override parseRaw(databaseRaw: RewardDatabaseJSONBody): {
         global: RewardMap,
         byChannel: ChannelRewardsMap
     } {
@@ -64,7 +64,7 @@ export class RewardDatabase extends Database {
         return { global, byChannel }
     }
 
-    public toJSON(): RewardDatabaseJSONBody {
+    public override toJSON(): RewardDatabaseJSONBody {
         this.rewardChannels = new Set(this.byChannel.keys())
 
         const rewards: RewardDatabaseJSONBody = {
@@ -114,7 +114,7 @@ export class SentMessagesDatabase extends Database {
         this.users = this.parseRaw(databaseRaw)
     }
 
-    protected parseRaw(databaseRaw: SentMessagesDatabaseJSONBody): Map<Snowflake, {
+    protected override parseRaw(databaseRaw: SentMessagesDatabaseJSONBody): Map<Snowflake, {
         global: number,
         byChannel: ChannelMessageCountMap
     }> {
@@ -127,7 +127,7 @@ export class SentMessagesDatabase extends Database {
         ]))
     }
 
-    public toJSON(): SentMessagesDatabaseJSONBody {
+    public override toJSON(): SentMessagesDatabaseJSONBody {
         const users: SentMessagesDatabaseJSONBody = {}
 
         this.users.forEach(({ global, byChannel }, userId) => {

@@ -1,5 +1,4 @@
 import { BaseGuildTextChannel, Interaction } from "discord.js"
-import { ephemeralAnswers } from ".."
 import { replyError } from "../util/reply-error"
 
 async function execute(interaction: Interaction) {

@@ -1,8 +1,8 @@
-import { SlashCommandBuilder, PermissionFlagsBits, Interaction, CommandInteraction, ChatInputCommandInteraction, Snowflake, ChannelType } from 'discord.js'
-import { getRequiredMessageCount, getAllRewards, deleteReward, createOrEditReward, isChannelValid } from '../database-handler.js'
-import { replyError } from '../util/reply-error.js'
-import { RewardMap } from '../types/database.js'
+import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, Snowflake } from 'discord.js'
+import { createOrEditReward, deleteReward, getAllRewards, getRequiredMessageCount, isChannelValid } from '../database-handler.js'
 import { ephemeralAnswers } from '../index.js'
+import { RewardMap } from '../types/database.js'
+import { replyError } from '../util/reply-error.js'
 
 export const data = new SlashCommandBuilder()
     .setName('rewards')
@@ -48,10 +48,6 @@ export const data = new SlashCommandBuilder()
         .setName('infos')
         .setDescription('Infos about rewards')
         .addSubcommand(subcommand => subcommand
-            .setName('overview')
-            .setDescription('Shows you an overview of the rewards available')    
-        )
-        .addSubcommand(subcommand => subcommand
             .setName('find-by-role')
             .setDescription('Shows you if a reward exists for a role, and if so, its required message count')
             .addRoleOption(option => option
@@ -64,6 +60,10 @@ export const data = new SlashCommandBuilder()
                 .setDescription('Delete reward for the specified channel (leave empty for a global reward)')
                 .addChannelTypes(ChannelType.GuildText)
             ) 
+        )        
+        .addSubcommand(subcommand => subcommand
+            .setName('overview')
+            .setDescription('Shows you an overview of the rewards available')    
         )
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
