@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, Snowflake } from 'discord.js'
 import { createOrEditReward, deleteReward, getAllRewards, getRequiredMessageCount, isChannelValid } from '../database-handler.js'
-import { ephemeralAnswers } from '../index.js'
+import { ephemeralAnswers } from '../../config/config.json'
 import { RewardMap } from '../types/database.js'
 import { replyError } from '../util/reply-error.js'
 

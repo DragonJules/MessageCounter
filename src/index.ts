@@ -4,7 +4,6 @@ import path from 'node:path'
 import { Client, Collection, GatewayIntentBits, Interaction, SlashCommandBuilder } from 'discord.js'
 import config from '../config/config.json'
 
-export const ephemeralAnswers: boolean = config.ephemeralAnswers
 
 interface Command {
 	data: SlashCommandBuilder,

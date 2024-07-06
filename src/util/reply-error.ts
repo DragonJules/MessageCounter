@@ -1,5 +1,5 @@
 import { BooleanCache, CacheType, ChatInputCommandInteraction, InteractionResponse } from "discord.js"
-import { ephemeralAnswers } from ".."
+import { ephemeralAnswers } from '../../config/config.json'
 
 export async function replyError(interaction: ChatInputCommandInteraction, message?: string): Promise<InteractionResponse<BooleanCache<CacheType>>> {
     const defaultErrorMessage = '❌ Something went wrong'

@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, Snowflake } from 'discord.js'
 import { editUser, getAllUsers, getUserInfos, getUserMessageCount, isChannelValid, resetUser } from '../database-handler.js'
-import { ephemeralAnswers } from '../index.js'
+import { ephemeralAnswers } from '../../config/config.json'
 import { replyError } from '../util/reply-error.js'
 
 
