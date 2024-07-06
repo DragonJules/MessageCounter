@@ -14,12 +14,12 @@ export const data = new SlashCommandBuilder()
             .setDescription('Creates (or edits) a reward with the specified parameters')
             .addRoleOption(option => option
                 .setName('reward-role')
-                .setDescription('The role given as reward for number of sent messages')
+                .setDescription('The role given as reward for a message count')
                 .setRequired(true)
             )
             .addIntegerOption(option => option
-                .setName('number-of-required-messages')
-                .setDescription('The number of messages that should be sent to get the reward')
+                .setName('required-message-count')
+                .setDescription('The required message count to get the reward')
                 .setRequired(true)
             )
             .addChannelOption(option => option
@@ -52,7 +52,7 @@ export const data = new SlashCommandBuilder()
         )
         .addSubcommand(subcommand => subcommand
             .setName('find-by-role')
-            .setDescription('Shows you if a reward exists for a role, and if so, its required number of message')
+            .setDescription('Shows you if a reward exists for a role, and if so, its required message count')
             .addRoleOption(option => option
                 .setName('reward-role')
                 .setDescription('Find a reward for this role')
@@ -72,102 +72,88 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     const subcommand = interaction.options.getSubcommand()
 
     const rewardRole = interaction.options.getRole('reward-role')
-    const requiredMessageCount = interaction.options.getInteger('number-of-required-messages')
+    const requiredMessageCount = interaction.options.getInteger('required-message-count')
 
     const channelId = interaction.options.getChannel('channel')?.id 
 
-    switch (subcommand) {
-        case 'create-or-edit':
-            if (!rewardRole || !requiredMessageCount) return await replyError(interaction)
-            createOrEditRewardCommand(interaction, rewardRole.id, requiredMessageCount, channelId)
-            break
-    
-        case 'delete':
-            if (!rewardRole) return await replyError(interaction)
-            deleteRewardCommand(interaction, rewardRole.id, channelId)
-            break
+    let response: string
 
-        case 'overview':
-            overviewRewardsCommand(interaction)
-            break
+    try {    
+        switch (subcommand) {
+            case 'create-or-edit':
+                if (!rewardRole || !requiredMessageCount) throw new Error('Missing arguments')
+                response = await createOrEditRewardCommand(rewardRole.id, requiredMessageCount, channelId)
+                break
+        
+            case 'delete':
+                if (!rewardRole) throw new Error('Missing arguments')
+                response = await deleteRewardCommand(rewardRole.id, channelId)
+                break
 
-        case 'find-by-role':
-            if (!rewardRole) return await replyError(interaction)
-            findRewardByRoleCommand(interaction, rewardRole.id, channelId)
-            break
+            case 'overview':
+                response = await overviewRewardsCommand()
+                break
 
-        default:
-            await replyError(interaction)
-            break
-    }
-}
+            case 'find-by-role':
+                if (!rewardRole) throw new Error('Missing arguments')
+                response = await findRewardByRoleCommand(rewardRole.id, channelId)
+                break
 
-
-
-async function createOrEditRewardCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake, requiredMessageCount: number, channelId?: string) {
-    try {
-        const success = await createOrEditReward(rewardRoleId, requiredMessageCount, channelId)
-        if(!success) throw new Error('The reward could not be created or edited')
+            default:
+                throw new Error(`Unknown command: ${subcommand}`)
+        }
     }
     catch (err) {
         console.error(err)
         return await replyError(interaction)
     }
 
-    return await interaction.reply('✅ Reward was successfully created/edited')
+    if(!response.length) return await replyError(interaction) 
+    interaction.reply(response)
+}
+
+
+
+async function createOrEditRewardCommand(rewardRoleId: Snowflake, requiredMessageCount: number, channelId?: string): Promise<string> {
+    const success = await createOrEditReward(rewardRoleId, requiredMessageCount, channelId)
+    if(!success) throw new Error('The reward could not be created or edited')
+
+    return '✅ Reward was successfully created/edited'
 }
     
-async function deleteRewardCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake, channelId?: string) {
-    try {
-        const success = await deleteReward(rewardRoleId, channelId)
-        if(!success) throw new Error('The reward could not be deleted')
-    }
-    catch (err) {
-        console.error(err)
-        return await replyError(interaction)
-    }
-
-    return await interaction.reply('✅ Reward was successfully deleted')
+async function deleteRewardCommand(rewardRoleId: Snowflake, channelId?: string): Promise<string> {
+    const success = await deleteReward(rewardRoleId, channelId)
+    if(!success) throw new Error('The reward could not be deleted')
+    
+    return '✅ Reward was successfully deleted'
 }
 
 function getRewardsTextArray(rewards: RewardMap): string[] {
     return Array.from(rewards.entries()).map(reward => `* <@&${reward[0]}> : ${reward[1]}`)
 }
 
-async function overviewRewardsCommand(interaction: ChatInputCommandInteraction) {
-    try {
-        const rewards = getAllRewards()
-        
-        const globalRewardsTextArray = getRewardsTextArray(rewards.global)
-        const globalRewardsText = globalRewardsTextArray.length ? globalRewardsTextArray.join('\n') : '*No reward*'
+async function overviewRewardsCommand(): Promise<string> {
+    const rewards = getAllRewards()
+    
+    const globalRewardsTextArray = getRewardsTextArray(rewards.global)
+    const globalRewardsText = globalRewardsTextArray.length ? globalRewardsTextArray.join('\n') : '*No reward*'
 
-        const channelRewardsTextArray = Array.from(rewards.byChannel.entries()).map(channelRewards => `* <#${channelRewards[0]}> :\n ${getRewardsTextArray(channelRewards[1]).join('\n ')}`)
-        const channelRewardsText = channelRewardsTextArray.length ? channelRewardsTextArray.join('\n') : '*No reward*'
+    const channelRewardsTextArray = Array.from(rewards.byChannel.entries()).map(channelRewards => `* <#${channelRewards[0]}> :\n ${getRewardsTextArray(channelRewards[1]).join('\n ')}`)
+    const channelRewardsText = channelRewardsTextArray.length ? channelRewardsTextArray.join('\n') : '*No reward*'
 
-        const message = `## Rewards Overview \n\`@role : required message count\`\n### Global : \n${globalRewardsText}\n### By Channel : \n${channelRewardsText}`
+    const message = `## Rewards Overview \n\`@role : required message count\`\n### Global : \n${globalRewardsText}\n### By Channel : \n${channelRewardsText}`
 
-        interaction.reply(message)
-    }
-    catch (err) {
-        console.error(err)
-        return await replyError(interaction)
-    }
+    return message
 }
 
-async function findRewardByRoleCommand(interaction: ChatInputCommandInteraction, rewardRoleId: Snowflake, channelId?: Snowflake) {
-    try {
-        const requiredMessageCount = getRequiredMessageCount(rewardRoleId, channelId)
+async function findRewardByRoleCommand(rewardRoleId: Snowflake, channelId?: Snowflake): Promise<string> {
+    const requiredMessageCount = getRequiredMessageCount(rewardRoleId, channelId)
 
-        const channelIsValid = isChannelValid(channelId)
-        const channelSpecificText = channelIsValid ? `in channel <#${channelId}>` : ''
+    const channelIsValid = isChannelValid(channelId)
+    const channelSpecificText = channelIsValid ? `in channel <#${channelId}>` : ''
 
-        const message = (requiredMessageCount) ? 
-            `The role <@&${rewardRoleId}> is earned after sending **${requiredMessageCount}** messages ${channelSpecificText}` :`There is no ${channelId ? `<#${channelId}> specific` : 'global'} reward with this role`
+    const message = (requiredMessageCount) ? 
+        `The role <@&${rewardRoleId}> is earned after sending **${requiredMessageCount}** messages ${channelSpecificText}` :`There is no ${channelId ? `<#${channelId}> specific` : 'global'} reward with this role`
 
-        return await interaction.reply(message)
-    }
-    catch (err) {
-        console.error(err)
-        return await replyError(interaction)
-    }
+    return message
 }

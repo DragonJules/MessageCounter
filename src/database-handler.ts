@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises'
-import { ChannelRewardsMap, Database, RewardDatabase, RewardMap, SentMessagesDatabase } from './types/database'
+import { ChannelMessageCountMap, ChannelRewardsMap, Database, RewardDatabase, RewardMap, SentMessagesDatabase } from './types/database'
 import { Snowflake } from 'discord.js'
 
 import rewardsDbRaw from '../database/rewards.json'
@@ -26,13 +26,29 @@ const save = (database: Database) => new Promise<boolean>(async (resolve, reject
     }
 })
 
+export function getUserInfos(userId: Snowflake): {
+    global: number,
+    byChannel: ChannelMessageCountMap
+} {
+    const user = sentMessagesDatabase.users.get(userId)
+
+    return {
+        global: user?.global || 0,
+        byChannel: user?.byChannel || new Map()
+    }
+}
+
 export function getUserMessageCount(userId: Snowflake, channelId?: Snowflake): number {
     if (!isChannelValid(channelId)) return sentMessagesDatabase.users.get(userId)?.global || 0
 
     return sentMessagesDatabase.users.get(userId)?.byChannel.get(channelId!) || 0 
 }
 
-export async function editUser(userId: Snowflake, messageCount = 0, channelId?: Snowflake): Promise<boolean> {
+export async function editUser(userId: Snowflake, messageCount: number, channelId?: Snowflake): Promise<boolean> {
+
+    messageCount = Math.floor(messageCount)
+    messageCount = Math.max(messageCount, 0)
+
     let user = sentMessagesDatabase.users.get(userId)
     if (!user) {
         sentMessagesDatabase.users.set(userId, {global: 0, byChannel: new Map()})
@@ -46,6 +62,18 @@ export async function editUser(userId: Snowflake, messageCount = 0, channelId?: 
     }
 
     return await save(sentMessagesDatabase)
+}
+
+export async function resetUser(userId: Snowflake): Promise<boolean> {
+    sentMessagesDatabase.users.set(userId, {global: 0, byChannel: new Map()})
+    return await save(sentMessagesDatabase)
+}
+
+export function getAllUsers(): Map<Snowflake, {
+    global: number,
+    byChannel: ChannelMessageCountMap
+}> {
+    return sentMessagesDatabase.users
 }
 
 export function getRewardRolesIds(currentMessageCount: number, channelId?: Snowflake): Snowflake[] {
