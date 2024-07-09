@@ -49,7 +49,7 @@ There are two commands, both with several subcommands:
 
 
 ## How to use
-This is repo is the bot's source code, not a bot itself. <br>
+This repo is the bot's source code, not a bot itself. <br>
 To use it, you must host it yourself. There are several methods to do this, some are free, some are paid (Be careful that your hosting solution allows file editing, sometimes called local database, otherwise all the bot's data will be lost if the server restarts). <br>
 Once you found the hoster for your bot, here are the steps to follow: <br>
 We will first create the bot :
@@ -71,7 +71,7 @@ We will first create the bot :
 
 Now, we can link the bot to the code, so you can start using it : 
 1. You need to have [Node.js](https://nodejs.org/en) installed on your machine.
-2. [Download my code](https://github.com/DragonJules/MessageCounter/archive/refs/heads/main.zip) and extracted it from the ZIP file, open the folder where it's located, and open a terminal from here.
+2. [Download my code](https://github.com/DragonJules/MessageCounter/archive/refs/heads/main.zip) and extract it from the ZIP file (or clone the repo), open the folder where it's located, and open a terminal from here.
 3. Install the required packages and compile the code by executing the following command:
 ```bash
 npm install && npm run build
@@ -86,7 +86,7 @@ npm install && npm run build
 ```
 5. Replace "true" by "false", if you want the answers of the bot to be visible to everyone.
 
-Your Bot is ready to be uploaded on the server ! The following steps may vary depending on your hosting solution.
+Your Bot is ready to be uploaded on the hosting server ! The following steps may vary depending on your hosting solution.
 1. Upload the whole **MessageCounter-main** folder on the server.
 2. Create a routine for restarting the server. Such that the following command is executed from the bot's folder each time the server is restarted.
 ```bash
@@ -102,7 +102,7 @@ npm run start
 ```
 
 All done ! You did it, your bot should be working perfectly ! 
-If you have any problem with it, feel free to message me on Discord !
+If you have any problem with it, feel free to message me on Discord, or open an [issue on Github](https://github.com/DragonJules/ShopBot/issues)
 
 
 ## Known Issues
