@@ -108,3 +108,9 @@ If you have any problem with it, feel free to message me on Discord, or open an 
 ## Known Issues
 
 1. Yet, I haven't implemented anything to prevent the user from setting a global message count smaller than the sum of the channel specific message counts.
+
+<br><br>
+---
+
+If you love the bot, feel free to support me: 
+<a href='https://ko-fi.com/itzdragon'><img src='https://ko-fi.com/img/githubbutton_sm.svg' height="27px"/></a>
