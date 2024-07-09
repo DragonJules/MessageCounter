@@ -10,7 +10,7 @@
 	},
 	"keywords": [],
 	"author": "@roules_",
-	"license": "ISC",
+	"license": "GPL-3.0",
 	"description": "",
 	"devDependencies": {
 		"concurrently": "^8.2.2",
