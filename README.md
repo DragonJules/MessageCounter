@@ -74,7 +74,7 @@ Now, we can link the bot to the code, so you can start using it :
 2. [Download my code](https://github.com/DragonJules/MessageCounter/archive/refs/heads/main.zip) and extracted it from the ZIP file, open the folder where it's located, and open a terminal from here.
 3. Install the required packages and compile the code by executing the following command:
 ```bash
-npm install --omit=dev && npm run build
+npm install && npm run build
 ```
 4. In the bot folder, open the **config** folder, then open **config.json** in any text editor, fill it with the informations you saved previously, like following:
 ```json
