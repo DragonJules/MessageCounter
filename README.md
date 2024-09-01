@@ -112,5 +112,5 @@ If you have any problem with it, feel free to message me on Discord, or open an 
 <br><br>
 ---
 
-If you love the bot, feel free to support me: 
+If you love the bot, feel free to support me: <br>
 <a href='https://ko-fi.com/itzdragon'><img src='https://ko-fi.com/img/githubbutton_sm.svg' height="27px"/></a>
